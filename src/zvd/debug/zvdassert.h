@@ -45,7 +45,7 @@ void test()
     std::vector<int> v;
     v.push_back(1961);
 
-    ZVD_ASSERT_HIGH1(v.size() == 0, ZVD_DEBUG_TEXT("Неверно, на самом деле размер: %d"), v.size());
+    ZVD_ASSERT_HIGH1(v.size() == 0, ZVD_DEBUG_TEXT("Not right, real size is: %d"), v.size());
  }
 
 ----------------------
