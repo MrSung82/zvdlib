@@ -36,7 +36,7 @@ SOFTWARE.
 -------------
  Description
 -------------
-Purpose: standard memory allocator definition.
+Purpose: memory management relative utils.
 
 ----------------------
  For developers notes
@@ -44,35 +44,60 @@ Purpose: standard memory allocator definition.
 
 */
 
-#ifndef ZVD_STDMEMALLOC_H
-#define ZVD_STDMEMALLOC_H
+#ifndef ZVD_MEMUTL_H
+#define ZVD_MEMUTL_H
+
+#include "common/zvdbasedefs.h"
 
 
-#include "common/zvdimemalloc.h"
-
-class zvd_stdmemalloc : public zvd_imemalloc
+template <typename TVal>
+class zvd_memutil_default
 {
 public:
-	typedef zvd_imemalloc base_class;
-	typedef typename base_class::err_type err_type;
+	typedef zvd_size size_type;
 
-	virtual ~zvd_stdmemalloc() {}
+	typedef void (*construct_fn)(void* p);
+	typedef void (*copy_construct_fn)(void* p, const TVal& val);
+	enum Constants
+	{
+		kMIN_CAP = 4
+	};
 
-	virtual void* allocate(size_type nBytes, 
-		err_type* pErrorCode = kZVD_NULLPTR(err_type));
+	static size_type grow_capacity(size_type nNewCount, size_type nCap)
+	{
+		if (nNewCount > nCap)
+		{
+			size_type nNewCap = nCap;
+			if (nNewCap < kMIN_CAP)
+				nNewCap = kMIN_CAP;
 
-	virtual void* reallocate(void* p, size_type nBytes, 
-		err_type* pErrorCode = kZVD_NULLPTR(err_type));
+			while (nNewCap < nNewCount)
+			{
+				nNewCap *= 2;
+			}
+			nCap = nNewCap;
+		}
+		return nCap;
+	}
 
-	virtual err_type deallocate(void* p);
+	static construct_fn construct;
 
-	static zvd_uint32 is_singleton();
+	static copy_construct_fn copy_construct;
 
-	static zvd_uint32 is_subsystem();
-
-	static zvd_uint32 can_be_created_on_stack();
-
-	static err_type create_on_stack(void* pStackMem, zvd_imemalloc** ppMemAlloc);
+	static void destroy(TVal* p)
+	{
+		p->~TVal();
+	}
 };
 
-#endif // ZVD_STDMEMALLOC_H
+template <typename TVal>
+typename zvd_memutil_default<TVal>::construct_fn
+zvd_memutil_default<TVal>::construct = 
+	kZVD_NULLFPTR(typename zvd_memutil_default<TVal>::construct_fn);
+
+template <typename TVal>
+typename zvd_memutil_default<TVal>::copy_construct_fn
+zvd_memutil_default<TVal>::copy_construct = 
+	kZVD_NULLFPTR(typename zvd_memutil_default<TVal>::copy_construct_fn);
+
+#endif // ZVD_MEMUTL_H

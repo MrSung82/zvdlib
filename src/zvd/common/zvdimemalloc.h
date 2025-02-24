@@ -54,23 +54,40 @@ class zvd_imemalloc
 {
 public:
 	typedef zvd_size size_type;
+	typedef zvd_uint8 err_type;
 
 	virtual ~zvd_imemalloc() {}
 
 	virtual void* allocate(size_type nBytes, 
-		zvd_uint32* pErrorCode = kZVD_NULLPTR(zvd_uint32)) = 0;
+		err_type* pErrorCode = kZVD_NULLPTR(err_type)) = 0;
 
 	virtual void* reallocate(void* p, size_type nBytes, 
-		zvd_uint32* pErrorCode = kZVD_NULLPTR(zvd_uint32)) = 0;
+		err_type* pErrorCode = kZVD_NULLPTR(err_type)) = 0;
 
-	virtual zvd_uint32 deallocate(void* p) = 0;
+	virtual err_type deallocate(void* p) = 0;
 
-	virtual bool is_singleton() const = 0;
+	// Methods to be used when allocator is template parameter
+	//--------------------------------------------------------
+	static zvd_uint32 is_singleton() { return kZVD_NO_U32; }
+	// If singleton implement these methods:
+	static zvd_imemalloc* instance() { return kZVD_NULLPTR(zvd_imemalloc); }
 
 	/// If true this memory allocator is subsystem of some larger system (engine).
-	virtual bool is_subsystem() const = 0;
+	static zvd_uint32 is_subsystem() { return kZVD_NO_U32; }
+	// If subsystem implement these methods:
+	// 
+	//	You can request to engine class for example 
+	static zvd_imemalloc* as_subsystem() { return kZVD_NULLPTR(zvd_imemalloc); }
+		//
+	virtual zvd_uint32 is_ready() const { return kZVD_NO_U32; }
+	virtual zvd_uint32 is_inited() const { return kZVD_NO_U32; }
 
-	virtual bool can_be_created_on_stack() const = 0;
+	static zvd_uint32 can_be_created_on_stack() { return kZVD_YES_U32; }
+	// If subsystem implement these methods:
+	static err_type create_on_stack(void* pStackMem, zvd_imemalloc** ppMemAlloc)
+	{
+		return kZVD_E_UNACCEPTABLE;
+	}
 };
 
 #endif // ZVD_IMEMALLOC_H

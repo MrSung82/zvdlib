@@ -154,10 +154,12 @@ typedef zvd_int16 zvd_ptrdiff;
 #ifdef ZVD_CPP11 
 #	define kZVD_NULLPTR(argType) nullptr
 #	define kZVD_NULLVOID nullptr
+#	define kZVD_NULLFPTR(argType) nullptr
 
 #else
 #	define kZVD_NULLPTR(argType) ((argType*)0)
 #	define kZVD_NULLVOID ((void*)0)
+#	define kZVD_NULLFPTR(argType) ((argType)0)
 #endif
 
 //++++++++++++++++++

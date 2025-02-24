@@ -46,35 +46,45 @@ Purpose: standard memory allocator implementation.
 
 #include "sys/mem/zvdstdmemalloc.h"
 #include "common/zvdstdlib.h"
+#include "debug/zvdassert.h"
 
-void* zvd_stdmemalloc::allocate(size_type nBytes, zvd_uint32* pErrorCode)
+#include <new>
+
+void* zvd_stdmemalloc::allocate(size_type nBytes, err_type* pErrorCode)
 {
 	return zvd_malloc(nBytes);
 }
 
 void* zvd_stdmemalloc::reallocate(void* p, size_type nBytes,
-	zvd_uint32* pErrorCode)
+	err_type* pErrorCode)
 {
 	return zvd_realloc(p, nBytes);
 }
 
-zvd_uint32 zvd_stdmemalloc::deallocate(void* p)
+zvd_stdmemalloc::err_type zvd_stdmemalloc::deallocate(void* p)
 {
 	zvd_free(p);
 	return kZVD_R_OK;
 }
 
-bool zvd_stdmemalloc::is_singleton() const 
+zvd_uint32 zvd_stdmemalloc::is_singleton()
 { 
-	return false;
+	return kZVD_NO_U32;
 }
 
-bool zvd_stdmemalloc::is_subsystem() const
+zvd_uint32 zvd_stdmemalloc::is_subsystem()
 {
-	return false;
+	return kZVD_NO_U32;
 }
 
-bool zvd_stdmemalloc::can_be_created_on_stack() const
+zvd_uint32 zvd_stdmemalloc::can_be_created_on_stack()
 {
-	return true;
+	return kZVD_YES_U32;
+}
+
+zvd_stdmemalloc::err_type zvd_stdmemalloc::create_on_stack(void* pStackMem, zvd_imemalloc** ppMemAlloc)
+{
+	ZVD_ASSERT_HIGH_NOMSG(ppMemAlloc);
+	*ppMemAlloc = ::new(pStackMem)zvd_stdmemalloc();
+	return kZVD_R_OK;
 }
