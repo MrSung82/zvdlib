@@ -47,7 +47,6 @@ Purpose: dynamic array.
 #ifndef ZVD_DARRAY_H
 #define ZVD_DARRAY_H
 
-#include "common/zvdmemutl.h"
 #include "common/zvdimemalloc.h"
 #include "debug/zvdassert.h"
 #include "debug/zvderrorcodes.h"
@@ -55,7 +54,7 @@ Purpose: dynamic array.
 
 
 template <typename TElem, typename TMemAlloc,
-	typename TUtil = zvd_memutil_default<TElem> >
+	typename TUtil>
 class zvd_darray
 {
 public:

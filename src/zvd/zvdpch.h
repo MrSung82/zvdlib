@@ -1,4 +1,4 @@
-/*
+﻿/*
 -----------------
  Persistent info
 -----------------
@@ -36,45 +36,28 @@ SOFTWARE.
 -------------
  Description
 -------------
-Purpose: stdlib interface implementation.
+Purpose: precompiled headers.
 
 ----------------------
  For developers notes
 ----------------------
 
+// pch.h: это предварительно скомпилированный заголовочный файл.
+// Перечисленные ниже файлы компилируются только один раз, что ускоряет последующие сборки.
+// Это также влияет на работу IntelliSense, включая многие функции просмотра и завершения кода.
+// Однако изменение любого из приведенных здесь файлов между операциями сборки приведет к повторной компиляции всех(!) этих файлов.
+// Не добавляйте сюда файлы, которые планируете часто изменять, так как в этом случае выигрыша в производительности не будет.
+
 */
 
-#include "zvdpch.h"
-#include "common/zvdstdlib.h"
 
-#include <cstdlib>
-//#include <iostream>
 
-void* zvd_malloc_impl(zvd_size nBytes)
-{
-	void* pResult = std::malloc(nBytes);
-	if (!pResult)
-	{
-		/// @todo not implemented yet
-	}
-	return pResult;
-}
+#ifndef ZVD_PCH_H
+#define ZVD_PCH_H
 
-void* zvd_realloc_impl(void* ptr, zvd_size nBytes)
-{
-	void* pResult = std::realloc(ptr, nBytes);
-	if (!pResult)
-	{
-		/// @todo not implemented yet
-	}
-	return pResult;
-}
+// Добавьте сюда заголовочные файлы для предварительной компиляции
+#include "common/zvdstaticsingleton.h"
+#include "debug/zvdassert.h"
+#include "containers/zvddarray.h"
 
-void zvd_free_impl(void* ptr)
-{
-	std::free(ptr);
-}
-
-zvd_malloc_fptr zvd_malloc = zvd_malloc_impl;
-zvd_realloc_fptr zvd_realloc = zvd_realloc_impl;
-zvd_free_fptr zvd_free = zvd_free_impl;
+#endif //ZVD_PCH_H

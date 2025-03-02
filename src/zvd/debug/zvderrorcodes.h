@@ -87,7 +87,7 @@ enum zvd_error_flags
 	kZVD_EF_BADARG = kZVD_EFX_OPERATION | kZVD_EF_BADDATA,
 	kZVD_EF_SYSTEM = kZVD_EFX_OPERATION | kZVD_EFX_SPEC2,
 
-	kZVD_EF_RESERVED1 = 13,
+	kZVD_EF_EMERGENCY = 13,
 	kZVD_EF_RESERVED2 = 15,
 
 	kZVD_EF_CTX_FIRST = 21,
@@ -109,6 +109,14 @@ const zvd_uint8 kZVD_R_OK = kZVD_EF_SUCCESS;
 const zvd_uint8 kZVD_R_CANCEL = kZVD_EF_SPECIAL;
 /// Not enough memory to continue operation
 const zvd_uint8 kZVD_E_NOMEMORY = ZVD_PACK_ERROR_U8(kZVD_EF_NOMEMORY);
+
+const zvd_uint8 kZVD_E_DONTREPEAT = ZVD_PACK_ERROR_U8(kZVD_EF_DONTREPEAT);
+const zvd_uint8 kZVD_E_NOPRECOND = ZVD_PACK_ERROR_U8(kZVD_EF_NOPRECOND);
+
+///  Abort program. Error is in design.
+const zvd_uint8 kZVD_E_ABORT = ZVD_PACK_ERROR_U8(kZVD_EF_EMERGENCY);
+const zvd_uint8 kZVD_E_UNACCEPTABLE = ZVD_PACK_ERROR_U8(kZVD_EF_UNKNOWN);
+
 
 
 #endif // ZVD_ERRORCODES_H

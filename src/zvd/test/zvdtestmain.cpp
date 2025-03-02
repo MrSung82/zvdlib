@@ -36,7 +36,7 @@ SOFTWARE.
 -------------
  Description
 -------------
-Purpose: stdlib interface implementation.
+Purpose: test entry point.
 
 ----------------------
  For developers notes
@@ -44,37 +44,13 @@ Purpose: stdlib interface implementation.
 
 */
 
-#include "zvdpch.h"
-#include "common/zvdstdlib.h"
 
-#include <cstdlib>
-//#include <iostream>
+#include <gtest/gtest.h>
 
-void* zvd_malloc_impl(zvd_size nBytes)
+#include "containers/zvddarray.h"
+
+int main(int argc, char** argv)
 {
-	void* pResult = std::malloc(nBytes);
-	if (!pResult)
-	{
-		/// @todo not implemented yet
-	}
-	return pResult;
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
-
-void* zvd_realloc_impl(void* ptr, zvd_size nBytes)
-{
-	void* pResult = std::realloc(ptr, nBytes);
-	if (!pResult)
-	{
-		/// @todo not implemented yet
-	}
-	return pResult;
-}
-
-void zvd_free_impl(void* ptr)
-{
-	std::free(ptr);
-}
-
-zvd_malloc_fptr zvd_malloc = zvd_malloc_impl;
-zvd_realloc_fptr zvd_realloc = zvd_realloc_impl;
-zvd_free_fptr zvd_free = zvd_free_impl;

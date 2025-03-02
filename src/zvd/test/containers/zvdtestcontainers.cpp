@@ -36,7 +36,7 @@ SOFTWARE.
 -------------
  Description
 -------------
-Purpose: stdlib interface implementation.
+Purpose: container test suites (implementation).
 
 ----------------------
  For developers notes
@@ -45,36 +45,39 @@ Purpose: stdlib interface implementation.
 */
 
 #include "zvdpch.h"
+#include "test/containers/zvdtestcontainerutl.h"
 #include "common/zvdstdlib.h"
+#include "debug/zvdassert.h"
+#include "common/zvdmemutl.h"
+#include "common/zvdmemutlnew.h"
 
-#include <cstdlib>
-//#include <iostream>
+#include <new>
+#include <unordered_map>
+#include <string>
+#include <cstring>
 
-void* zvd_malloc_impl(zvd_size nBytes)
-{
-	void* pResult = std::malloc(nBytes);
-	if (!pResult)
-	{
-		/// @todo not implemented yet
-	}
-	return pResult;
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+
+
+
+// Tests factorial of 0.
+TEST(zvd_darray, push_back_size) {
+	typedef zvd::container_test::Dummy DummyType;
+
+	typedef zvd_darray<DummyType,
+		zvd::container_test::testmemalloc,
+		zvd_new_based_memutil<DummyType, 4>
+	> DummiesArrayType;
+
+	typedef DummiesArrayType::size_type SizeType;
+
+	DummiesArrayType dummies_array;
+	SizeType nInitSize = dummies_array.size();
+
+	dummies_array.push_back(zvd::container_test::Dummy("Tolstoy", 1828));
+	SizeType nSizeAfterPush1 = dummies_array.size();
+
+	ASSERT_TRUE(nInitSize == 0);
+	ASSERT_TRUE(nSizeAfterPush1 == 1);
 }
-
-void* zvd_realloc_impl(void* ptr, zvd_size nBytes)
-{
-	void* pResult = std::realloc(ptr, nBytes);
-	if (!pResult)
-	{
-		/// @todo not implemented yet
-	}
-	return pResult;
-}
-
-void zvd_free_impl(void* ptr)
-{
-	std::free(ptr);
-}
-
-zvd_malloc_fptr zvd_malloc = zvd_malloc_impl;
-zvd_realloc_fptr zvd_realloc = zvd_realloc_impl;
-zvd_free_fptr zvd_free = zvd_free_impl;

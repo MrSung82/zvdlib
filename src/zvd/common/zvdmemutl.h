@@ -50,54 +50,31 @@ Purpose: memory management relative utils.
 #include "common/zvdbasedefs.h"
 
 
-template <typename TVal>
-class zvd_memutil_default
+template <typename TVal,
+	zvd_size (*FNextCapacity)(zvd_size),
+	zvd_size KMinCap = 4>
+class zvd_grow_capacity
 {
 public:
 	typedef zvd_size size_type;
 
-	typedef void (*construct_fn)(void* p);
-	typedef void (*copy_construct_fn)(void* p, const TVal& val);
-	enum Constants
+	static size_type evaluate(size_type nNewCount, size_type nCurrentCap)
 	{
-		kMIN_CAP = 4
-	};
-
-	static size_type grow_capacity(size_type nNewCount, size_type nCap)
-	{
-		if (nNewCount > nCap)
+		if (nNewCount > nCurrentCap)
 		{
-			size_type nNewCap = nCap;
-			if (nNewCap < kMIN_CAP)
-				nNewCap = kMIN_CAP;
+			size_type nNewCap = nCurrentCap;
+			if (nNewCap < KMinCap)
+				nNewCap = KMinCap;
 
 			while (nNewCap < nNewCount)
 			{
-				nNewCap *= 2;
+				nNewCap = FNextCapacity(nNewCap);
 			}
-			nCap = nNewCap;
+			return nNewCap;
 		}
-		return nCap;
-	}
-
-	static construct_fn construct;
-
-	static copy_construct_fn copy_construct;
-
-	static void destroy(TVal* p)
-	{
-		p->~TVal();
+		return nCurrentCap;
 	}
 };
 
-template <typename TVal>
-typename zvd_memutil_default<TVal>::construct_fn
-zvd_memutil_default<TVal>::construct = 
-	kZVD_NULLFPTR(typename zvd_memutil_default<TVal>::construct_fn);
-
-template <typename TVal>
-typename zvd_memutil_default<TVal>::copy_construct_fn
-zvd_memutil_default<TVal>::copy_construct = 
-	kZVD_NULLFPTR(typename zvd_memutil_default<TVal>::copy_construct_fn);
 
 #endif // ZVD_MEMUTL_H

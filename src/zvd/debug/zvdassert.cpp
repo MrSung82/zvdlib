@@ -44,6 +44,7 @@ Purpose: assert implementation.
 
 */
 
+#include "zvdpch.h"
 #include <assert.h>
 #include <stdio.h>
 

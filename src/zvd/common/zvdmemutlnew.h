@@ -36,7 +36,7 @@ SOFTWARE.
 -------------
  Description
 -------------
-Purpose: stdlib interface implementation.
+Purpose: memory management relative utils.
 
 ----------------------
  For developers notes
@@ -44,37 +44,44 @@ Purpose: stdlib interface implementation.
 
 */
 
-#include "zvdpch.h"
-#include "common/zvdstdlib.h"
+#ifndef ZVD_MEMUTLNEW_H
+#define ZVD_MEMUTLNEW_H
 
-#include <cstdlib>
-//#include <iostream>
+#include "common/zvdmemutl.h"
+#include <new>
 
-void* zvd_malloc_impl(zvd_size nBytes)
+template <typename TVal,
+	zvd_size KMinCap = 4>
+struct zvd_new_based_memutil
 {
-	void* pResult = std::malloc(nBytes);
-	if (!pResult)
+	typedef zvd_size size_type;
+
+	static size_type next_capacity(size_type nCap)
 	{
-		/// @todo not implemented yet
+		return nCap * 2;
 	}
-	return pResult;
-}
 
-void* zvd_realloc_impl(void* ptr, zvd_size nBytes)
-{
-	void* pResult = std::realloc(ptr, nBytes);
-	if (!pResult)
+	static size_type grow_capacity(size_type nNewCount, size_type nCurrentCap)
 	{
-		/// @todo not implemented yet
+		return zvd_grow_capacity<TVal, 
+			next_capacity, 
+			KMinCap>::evaluate(nNewCount, nCurrentCap);
 	}
-	return pResult;
-}
 
-void zvd_free_impl(void* ptr)
-{
-	std::free(ptr);
-}
+	static void construct(void* p)
+	{
+		::new(p) TVal();
+	}
 
-zvd_malloc_fptr zvd_malloc = zvd_malloc_impl;
-zvd_realloc_fptr zvd_realloc = zvd_realloc_impl;
-zvd_free_fptr zvd_free = zvd_free_impl;
+	static void copy_construct(void* p, const TVal& val)
+	{
+		::new(p) TVal(val);
+	}
+
+	static void destroy(TVal* p)
+	{
+		p->~TVal();
+	}
+};
+
+#endif // ZVD_MEMUTLNEW_H

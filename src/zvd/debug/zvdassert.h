@@ -141,7 +141,7 @@ namespace zvd
 
                 friend class zvd_static_singleton<assert_point,
                     sizeof(void*) * 4, assert_point_ctor>;
-                friend class assert_point_ctor;
+                friend struct assert_point_ctor;
 
                 void set(const_string_type expr, const_string_type fileAndLine)
                 {
@@ -177,7 +177,7 @@ namespace zvd
 #define ZVD_FIX_ASSERT_POINT(exp) { if (!(exp)) { zvd::debug::details::assert_point::instance().set(ZVD_DEBUG_STRINGIFY(exp), ZVD_FILE_AND_LINE); } }
 
 //
-#   define ZVD_ASSERT_IMPL_NOMSG(exp)               { if (!(exp)) { ZVD_FIX_ASSERT_POINT(exp); zvd::debug::details::output_assert_message(""                            ); ZVD_DEBUG_BP(); } }
+#   define ZVD_ASSERT_IMPL_NOMSG(exp)               { if (!(exp)) { ZVD_FIX_ASSERT_POINT(exp); zvd::debug::details::output_assert_message(ZVD_DEBUG_EMPTY_TEXT          ); ZVD_DEBUG_BP(); } }
 #   define ZVD_ASSERT_IMPL(exp,fmt)                 { if (!(exp)) { ZVD_FIX_ASSERT_POINT(exp); zvd::debug::details::output_assert_message(fmt                           ); ZVD_DEBUG_BP(); } }
 #   define ZVD_ASSERT_IMPL1(exp,fmt,a1)             { if (!(exp)) { ZVD_FIX_ASSERT_POINT(exp); zvd::debug::details::output_assert_message(fmt, (a1)                     ); ZVD_DEBUG_BP(); } }
 #   define ZVD_ASSERT_IMPL2(exp,fmt,a1,a2)          { if (!(exp)) { ZVD_FIX_ASSERT_POINT(exp); zvd::debug::details::output_assert_message(fmt, (a1), (a2)               ); ZVD_DEBUG_BP(); } }

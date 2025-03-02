@@ -44,6 +44,7 @@ Purpose: standard memory allocator implementation.
 
 */
 
+#include "zvdpch.h"
 #include "sys/mem/zvdstdmemalloc.h"
 #include "common/zvdstdlib.h"
 #include "debug/zvdassert.h"
